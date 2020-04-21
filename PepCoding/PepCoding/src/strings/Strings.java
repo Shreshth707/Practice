@@ -69,63 +69,54 @@ public class Strings {
 		// int[] num = { 2, 3, 5, 6 };
 		// waystoprintnoPermu(num, 0, 7, "");
 		// waystoprintnoCombi(num, 0, 7, 0, "");
-		int[][] check = new int[4][4];
-		nqueens(check,1,0,-1,"");
+		//int[][] check = new int[4][4];
+		//nQueens(check,1,0,-1,"");
 	}
 
 	static int length = 0;
 
 	static int count = 0;
-
-	public static void nqueens(int[][] check, int cq, int lqi, int lqj, String asf) {
-		if (cq > check.length) {
+	
+	public static void nQueens(int[][]check,int currQ,int qi,int qj,String asf) {
+		if (currQ > check.length) {
 			System.out.println(++count + asf);
 			return;
 		}
-		for (int i = lqi; i < check.length; i++) {
-			for (int j = (i == lqi ? j = lqj + 1 : 0); j < check[0].length; j++) {
-				if (check[i][j] == 0 && isQueensafe(check,i,j)) {
-					check[i][j] = 1;
-					nqueens(check, cq + 1, i, j, asf + "(" + i + "," + j + ")" + "-");
-					check[i][j] = 0;
+		for (int i = qi;i<check.length;i++) {
+			for (int j = (i == qi?qj+1:0);j<check.length;j++) {
+				if (check[i][j]!=1 && isSafe(i,j,check)) {
+					check[i][j]=1;
+					nQueens(check,currQ+1,i,j,asf + "("+i+","+j+")"+"-");
+					check[i][j]=0;
 				}
 			}
 		}
 	}
+	
+	
+	
 
-	private static boolean isQueensafe(int[][] check,int qi ,int qj) {
+	private static boolean isSafe(int qi, int qj, int[][] check) {
 		// TODO Auto-generated method stub
-		for (int i = qi-1;i>=0;i--) {
-			if (check[i][qj] == 1) {
-				return false;
-			}
+		for (int i = qi;i>=0;i--) {
+			if (check[i][qj]==1) return false;
 		}
-		for (int j = qj-1;j>=0;j--) {
-			if (check[qi][j]==1) {
-				return false;
-			}
+		for (int j = qj;j>=0;j--) {
+			if (check[qi][j]==1) return false;
 		}
-		int i = qi-1;
-		int j = qj-1;
-		while(i>=0 && j >=0) {
-			if (check[i][j] == 1) {
-				return false;
-			}
-			i--;
-			j--;
+		for (int i = qi , j = qj;i>=0 && j>=0;i--,j--) {
+			if (check[i][j]==1) return false;
 		}
-		i = qi-1;
-		j = qj+1;
-		
-		while(i>=0 && j <check.length) {
-			if (check[i][j] == 1) {
-				return false;
-			}
-			i--;
-			j++;
+		for (int i = qi,j=qj;i>=0&&j<check[0].length;i--,j++) {
+			if (check[i][j]==1) return false;
 		}
 		return true;
 	}
+
+
+
+
+	
 
 	public static void waystoprintnoCombi(int[] num, int src, int dst, int li, String asf) {
 		if (src == dst) {
