@@ -15,7 +15,10 @@ import java.util.ArrayList;
  * Permutations in Box and Objects Method 1,2,3
  * Combination in Box and Objects Method 1,2
  * How many ways to Print a No using given nos in an Array(Coin Change)
- * N Queens Problem 
+ * N Queens Problem
+ * N Knights Problem 
+ * Code Print 
+ * Can Reach
  */
 public class Strings {
 
@@ -69,54 +72,142 @@ public class Strings {
 		// int[] num = { 2, 3, 5, 6 };
 		// waystoprintnoPermu(num, 0, 7, "");
 		// waystoprintnoCombi(num, 0, 7, 0, "");
-		//int[][] check = new int[4][4];
-		//nQueens(check,1,0,-1,"");
+		// int[][] check = new int[3][3];
+		// nQueens(check,1,0,-1,"");
+		// nKnights(check, 1, 0, -1, "");
+		// codePrint("1234",0, "");
+		//int[] arr = {4,2,3,0,3,1,2};
+		//System.out.println(canReach(arr,6));
 	}
+	
+	
+	 public static boolean canReach(int[] arr, int start) {
+	        ArrayList<Integer>[] source = new ArrayList[arr.length];
+	        for (int i = 0;i<arr.length;i++){
+	            source[i] = new ArrayList<>();
+	        }
+	        for (int i = 0;i<arr.length;i++){
+	            if (arr[i] + i<arr.length){
+	                if (arr[i]+i!=i)
+	                	source[arr[i] + i].add(i);
+	            }
+	            if (i - arr[i]>=0){
+	            	if (arr[i]+i!=i)
+	            		source[i - arr[i]].add(i);
+	            }
+	        }
+	        boolean ans = false;
+	        for (int i = 0;i<arr.length;i++){
+	            if (arr[i] == 0){
+	                ans = canReachMV(arr,source,i,start);
+	            }
+	        }
+	        return ans;
+	        
+	        
+	    }
+	    
+	    public static boolean canReachMV(int[] arr,ArrayList<Integer>[] source,int ci,int start){
+	        if (ci == start){
+	            return true;
+	        }
+	        boolean found = false;
+	        for (int i :source[ci]){
+	            found = canReachMV(arr,source,i,start);
+	        }
+	        return found;
+	    }
+	   
 
 	static int length = 0;
 
 	static int count = 0;
-	
-	public static void nQueens(int[][]check,int currQ,int qi,int qj,String asf) {
+
+	public static void codePrint(String code, int index, String asf) {
+		if (index == code.length()) {
+			System.out.println(++count + " " + asf);
+			return;
+		}
+		if (index < code.length() - 1) {
+			// dont group
+			codePrint(code, index + 1,
+					asf + String.valueOf((char) (Integer.parseInt(String.valueOf(code.charAt(index))) + 96)) + "-");
+			// group
+			codePrint(code, index + 2,
+					asf + String.valueOf((char) (Integer.parseInt(String.valueOf(code.charAt(index))) * 10
+							+ Integer.parseInt(String.valueOf(code.charAt(index + 1))) + 96)) + "-");
+		} else {
+			codePrint(code, index + 1,
+					asf + String.valueOf((char) (Integer.parseInt(String.valueOf(code.charAt(index))) + 96)) + "-");
+		}
+	}
+
+	public static void nKnights(int[][] check, int currQ, int qi, int qj, String asf) {
 		if (currQ > check.length) {
 			System.out.println(++count + asf);
 			return;
 		}
-		for (int i = qi;i<check.length;i++) {
-			for (int j = (i == qi?qj+1:0);j<check.length;j++) {
-				if (check[i][j]!=1 && isSafe(i,j,check)) {
-					check[i][j]=1;
-					nQueens(check,currQ+1,i,j,asf + "("+i+","+j+")"+"-");
-					check[i][j]=0;
+		for (int i = qi; i < check.length; i++) {
+			for (int j = (i == qi ? qj + 1 : 0); j < check.length; j++) {
+				if (check[i][j] != 1 && isKnightSafe(i, j, check)) {
+					check[i][j] = 1;
+					nKnights(check, currQ + 1, i, j, asf + "(" + i + "," + j + ")" + "-");
+					check[i][j] = 0;
 				}
 			}
 		}
 	}
-	
-	
-	
 
-	private static boolean isSafe(int qi, int qj, int[][] check) {
+	private static boolean isKnightSafe(int ki, int kj, int[][] check) {
+		if (ki > 0 && kj > 1 && check[ki - 1][kj - 2] == 1) {
+			return false;
+		} else if (ki > 1 && kj > 0 && check[ki - 2][kj - 1] == 1) {
+			return false;
+		} else if (ki > 1 && kj < check.length - 1 && check[ki - 2][kj + 1] == 1) {
+			return false;
+		} else if (ki > 0 && kj < check.length - 2 && check[ki - 1][kj + 2] == 1) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public static void nQueens(int[][] check, int currQ, int qi, int qj, String asf) {
+		if (currQ > check.length) {
+			System.out.println(++count + asf);
+			return;
+		}
+		for (int i = qi; i < check.length; i++) {
+			for (int j = (i == qi ? qj + 1 : 0); j < check.length; j++) {
+				if (check[i][j] != 1 && isQueenSafe(i, j, check)) {
+					check[i][j] = 1;
+					nQueens(check, currQ + 1, i, j, asf + "(" + i + "," + j + ")" + "-");
+					check[i][j] = 0;
+				}
+			}
+		}
+	}
+
+	private static boolean isQueenSafe(int qi, int qj, int[][] check) {
 		// TODO Auto-generated method stub
-		for (int i = qi;i>=0;i--) {
-			if (check[i][qj]==1) return false;
+		for (int i = qi; i >= 0; i--) {
+			if (check[i][qj] == 1)
+				return false;
 		}
-		for (int j = qj;j>=0;j--) {
-			if (check[qi][j]==1) return false;
+		for (int j = qj; j >= 0; j--) {
+			if (check[qi][j] == 1)
+				return false;
 		}
-		for (int i = qi , j = qj;i>=0 && j>=0;i--,j--) {
-			if (check[i][j]==1) return false;
+		for (int i = qi, j = qj; i >= 0 && j >= 0; i--, j--) {
+			if (check[i][j] == 1)
+				return false;
 		}
-		for (int i = qi,j=qj;i>=0&&j<check[0].length;i--,j++) {
-			if (check[i][j]==1) return false;
+		for (int i = qi, j = qj; i >= 0 && j < check[0].length; i--, j++) {
+			if (check[i][j] == 1)
+				return false;
 		}
 		return true;
 	}
-
-
-
-
-	
 
 	public static void waystoprintnoCombi(int[] num, int src, int dst, int li, String asf) {
 		if (src == dst) {
