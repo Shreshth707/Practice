@@ -32,6 +32,8 @@ public class Dp {
 	// Activity Selection (DP) (Greedy)
 	// Fractional Knapsack (Greedy)
 	// Minimum Platforms Required (Greedy)
+	// Job Sequence (Greedy)
+	// Max Possible Square Possible of 1s
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -69,10 +71,22 @@ public class Dp {
 		// System.out.println(actvitySelection(starta, enda));
 		// System.out.println(activitySelectionGreedy(starta,enda));
 		// System.out.println(fractionalKnapsack(weights, prices, 50));
-		System.out.println(minPlatforms(arrival, departure));
+		// System.out.println(minPlatforms(arrival, departure));
+		// System.out.println(jobSequence(days, profit));
+		System.out.println(maxPossibleSquare(matrix));
 		end = System.currentTimeMillis();
 		System.out.println("Time:" + (end - start));
 	}
+
+	static int[][] matrix = {{1,0,0,1,0,0,1,0},
+							{1,1,1,1,1,1,1,1},
+							{1,1,0,1,1,1,1,1},
+							{1,0,1,1,1,1,1,0},
+							{0,1,1,1,1,1,1,1},
+							{1,0,1,0,1,1,0,1},
+							{1,0,0,1,1,1,1,1}};
+	static int[] days = { 2, 1, 2, 1, 3 };
+	static int[] profit = { 100, 19, 27, 25, 15 };
 
 	static int[] arrival = { 900, 940, 950, 1100, 1500, 1800 };
 	static int[] departure = { 910, 1200, 1120, 1130, 1900, 2000 };
@@ -88,6 +102,74 @@ public class Dp {
 	static int[][] grid = { { 1, 5, 1, 0, 3 }, { 1, 4, 0, 2, 3 }, { 4, 0, 1, 3, 2 }, { 2, 4, 0, 4, 1 },
 			{ 1, 2, 3, 2, 0 } };
 	static int[] coins = { 1, 2, 5, 10, 20, 50, 100, 200, 500, 2000 };
+
+	/** Max Possible Square Possible of 1s **/
+	public static int maxPossibleSquare(int[][] matrix) {
+		int[][] dp = new int[matrix.length][matrix[0].length];
+		int max = 0;
+		for (int i = matrix.length - 1; i >= 0; i--) {
+			for (int j = matrix[0].length - 1; j >= 0; j--) {
+				if (i == matrix.length - 1 || j == matrix[0].length - 1) {
+					dp[i][j] = matrix[i][j];
+					max = Math.max(max, dp[i][j]);
+				} else {
+					if (matrix[i][j] == 1) {
+						dp[i][j] = Math.min(dp[i + 1][j + 1], Math.min(dp[i + 1][j], dp[i][j + 1])) + 1;
+						max = Math.max(max, dp[i][j]);
+					}else {
+						dp[i][j] = matrix[i][j];
+						max = Math.max(max, dp[i][j]);
+					}
+					
+				}
+			}
+		}
+		return max;
+	}
+
+	/** Job Sequence (Greedy) **/
+	public static class Jobs implements Comparable<Jobs> {
+		int days;
+		int profit;
+
+		Jobs(int days, int profit) {
+			this.days = days;
+			this.profit = profit;
+		}
+
+		public int compareTo(Jobs other) {
+			return (this.profit - other.profit) * (-1);
+		}
+	}
+
+	public static int jobSequence(int[] days, int[] profit) {
+		Jobs[] jobs = new Jobs[days.length];
+		int max_days = 0;
+		for (int i = 0; i < jobs.length; i++) {
+			jobs[i] = new Jobs(days[i], profit[i]);
+			max_days = Math.max(max_days, days[i]);
+		}
+		Arrays.sort(jobs);
+		boolean[] check = new boolean[max_days + 1];
+		int val = 0;
+		for (int i = 0; i < jobs.length; i++) {
+			if (check[jobs[i].days] == false) {
+				check[jobs[i].days] = true;
+				val += jobs[i].profit;
+			} else {
+				int j = jobs[i].days - 1;
+				while (j > 0) {
+					if (check[j] == false) {
+						check[j] = true;
+						val += jobs[i].profit;
+						break;
+					}
+					j--;
+				}
+			}
+		}
+		return val;
+	}
 
 	/** Minimum Platforms Required (Greedy) **/
 	public static int minPlatforms(int[] arrival, int[] departure) {
