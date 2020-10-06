@@ -456,11 +456,11 @@ public class Dp {
 					// nothing
 				} else {
 					int min = Integer.MAX_VALUE;
-					for (int k = 0; k < gap; k++) {
-						int left = dp[i][i + k];
-						int down = dp[i + k + 1][j];
+					for (int k = i; k < j; k++) {
+						int left = dp[i][k];
+						int down = dp[k + 1][j];
 						min = Math.min(min, left + down + arr[i] * arr[j + 1] * arr[k + 1]);
-					}
+				    	}
 					dp[i][j] = min;
 				}
 			}
